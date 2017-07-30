@@ -1,0 +1,47 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="windowMinWidthMajor">@dimen/abc_dialog_min_width_major1</item>
+        <item name="windowMinWidthMinor">@dimen/abc_dialog_min_width_minor1</item>
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/color_3462ff</item>
+        <item name="android:windowTitleStyle">@style/AlertTitleTextStyle</item>
+        <!-- Used for the title and text -->
+        <item name="android:textColorPrimary">@color/color_828282</item>
+        <!-- Used for the background -->
+        <item name="android:background">@drawable/shape_rectangle</item>
+    </style>
+
+    <!--调整AlertDialog宽度-->
+    <item name="abc_dialog_min_width_major1" type="dimen">60%</item>
+    <item name="abc_dialog_min_width_minor1" type="dimen">60%</item>
+
+    <style name="AlertTitleTextStyle">
+        <item name="android:textColor">@color/color_1E1E1E</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Title</item>
+    </style>
+
+    <style name="theroy_title_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">15dp</item>
+    </style>
+
+    <style name="theory_chapter_container_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ic_book_shelf</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+    </style>
+
+</resources>

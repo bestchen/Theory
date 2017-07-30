@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/item_holder_title_pre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="菩提道次第光论"
+        android:textColor="@color/color_cc9900"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/item_holder_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="讲记"
+        android:textColor="@color/color_cc9900"
+        android:textSize="18sp" />
+</LinearLayout>
