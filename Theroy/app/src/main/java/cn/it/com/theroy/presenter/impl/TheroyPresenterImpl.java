@@ -4,7 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -40,12 +45,7 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
 
     public TheroyPresenterImpl(ITheoryView iView) {
         this.iView = new WeakReference<ITheoryView>(iView);
-        //获取下载管理器
-        downLoadManager = DownLoadService.getDownLoadManager();
-        if (downLoadManager != null) {
-            downLoadManager.changeUser("theory");
-            downloadingTaskInfos = downLoadManager.getAllTask();
-        }
+        handler.sendEmptyMessageDelayed(0, 100);
     }
 
     @Override
@@ -53,42 +53,21 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
         if (iViewNull()) {
             return;
         }
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConstUitls.DOWNLOAD_SERVICE_CREATED);
-        LocalBroadcastManager.getInstance(TheroyApplication.getContext()).registerReceiver(receiver, intentFilter);
         initRecordItems();
         initOriginItems();
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //设置用户ID，客户端切换用户时可以显示相应用户的下载任务
-            downLoadManager = DownLoadService.getDownLoadManager();
-            downLoadManager.changeUser("theory");
-            downloadingTaskInfos = downLoadManager.getAllTask();
-        }
-    };
-
     private void initRecordItems() {
         String[] recordIds = getResources().getStringArray(R.array.theory_record_id);
+        final String[] chapters = getResources().getStringArray(R.array.theory_record_chapter);
         ArrayList<TheoryItemBean> records = new ArrayList<>(recordIds.length);
-        for (String id : recordIds) {
-            TheoryItemBean readTheoryItem = FileUtils.readTheoryItem(FileUtils.getRecordPath(id));
+        for (int i = 0, len = recordIds.length; i < len; i++) {
+            TheoryItemBean readTheoryItem = FileUtils.readTheoryItem(FileUtils.getRecordPath(recordIds[i]));
             if (readTheoryItem == null) {
-                break;
+                readTheoryItem = TheoryItemBean.createRecodItem(recordIds[i], chapters[i]);
+                saveTheoryItem(FileUtils.getRecordPath(recordIds[i]), readTheoryItem);
             }
             records.add(readTheoryItem);
-        }
-        if (records.size() < recordIds.length) {
-            records.clear();
-            final String[] chapters = getResources().getStringArray(R.array.theory_record_chapter);
-            final int len = Math.min(recordIds.length, chapters.length);
-            for (int i = 0; i < len; i++) {
-                TheoryItemBean item = TheoryItemBean.createRecodItem(recordIds[i], chapters[i]);
-                records.add(item);
-                FileUtils.saveTheoryItem(FileUtils.getRecordPath(recordIds[i]), item);
-            }
         }
         iView.get().initRecord(records);
     }
@@ -96,23 +75,23 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
     private void initOriginItems() {
         String[] originIds = getResources().getStringArray(R.array.theory_origin_id);
         ArrayList<TheoryItemBean> origins = new ArrayList<>(originIds.length);
-        for (String id : originIds) {
-            TheoryItemBean readTheoryItem = FileUtils.readTheoryItem(FileUtils.getOriginPath(id));
-            if (readTheoryItem == null) {
-                break;
-            }
-            origins.add(readTheoryItem);
+//        for (String id : originIds) {
+//            TheoryItemBean readTheoryItem = FileUtils.readTheoryItem(FileUtils.getOriginPath(id));
+//            if (readTheoryItem == null) {
+//                break;
+//            }
+//            origins.add(readTheoryItem);
+//        }
+//        if (origins.size() < originIds.length) {
+//            origins.clear();
+        final String[] chapters = getResources().getStringArray(R.array.theory_origin_chapter);
+        final int len = Math.min(originIds.length, chapters.length);
+        for (int i = 0; i < len; i++) {
+            TheoryItemBean item = TheoryItemBean.createOriginItem(originIds[i], chapters[i]);
+            origins.add(item);
+//            saveTheoryItem(FileUtils.getOriginPath(originIds[i]), item);
         }
-        if (origins.size() < originIds.length) {
-            origins.clear();
-            final String[] chapters = getResources().getStringArray(R.array.theory_origin_chapter);
-            final int len = Math.min(originIds.length, chapters.length);
-            for (int i = 0; i < len; i++) {
-                TheoryItemBean item = TheoryItemBean.createOriginItem(originIds[i], chapters[i]);
-                origins.add(item);
-                FileUtils.saveTheoryItem(FileUtils.getOriginPath(originIds[i]), item);
-            }
-        }
+//        }
         iView.get().initOrigin(origins);
     }
 
@@ -122,7 +101,7 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
     }
 
     @Override
-    public void downLoad(final ItemBookView itemBookView, TheoryItemBean bean) {
+    public void downLoad(TheoryItemBean bean) {
         if (iViewNull()) {
             return;
         }
@@ -149,43 +128,43 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
                 info.setOnDownloading(true);
                 //将任务添加到下载队列，下载器会自动开始下载
                 if (downLoadManager == null) {
-                    return;
+                    downLoadManager = DownLoadService.getDownLoadManager();
                 }
-                downLoadManager.addTask(bean.getDownloadFileName(), bean.getDownloadPath(), bean.getDownloadFileName());
+                downLoadManager.addTask(bean.getId(), bean.getDownloadPath(), bean.getId());
                 downloadingTaskInfos.add(info);
                 downLoadManager.setAllTaskListener(new DownLoadListener() {
                     @Override
                     public void onStart(SQLDownLoadInfo sqlDownLoadInfo) {
                         if (!iViewNull()) {
-                            iView.get().onStartDownload(itemBookView, sqlDownLoadInfo);
+                            iView.get().onStartDownload(sqlDownLoadInfo);
                         }
                     }
 
                     @Override
                     public void onProgress(SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint) {
                         if (!iViewNull()) {
-                            iView.get().onProgressDownload(itemBookView, sqlDownLoadInfo, isSupportBreakpoint);
+                            iView.get().onProgressDownload(sqlDownLoadInfo, isSupportBreakpoint);
                         }
                     }
 
                     @Override
                     public void onStop(SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint) {
                         if (!iViewNull()) {
-                            iView.get().onStopDownload(itemBookView, sqlDownLoadInfo, isSupportBreakpoint);
+                            iView.get().onStopDownload(sqlDownLoadInfo, isSupportBreakpoint);
                         }
                     }
 
                     @Override
                     public void onError(SQLDownLoadInfo sqlDownLoadInfo) {
                         if (!iViewNull()) {
-                            iView.get().onErrorDownload(itemBookView, sqlDownLoadInfo);
+                            iView.get().onErrorDownload(sqlDownLoadInfo);
                         }
                     }
 
                     @Override
                     public void onSuccess(SQLDownLoadInfo sqlDownLoadInfo) {
                         if (!iViewNull()) {
-                            iView.get().onSucessDownload(itemBookView, sqlDownLoadInfo);
+                            iView.get().onSucessDownload(sqlDownLoadInfo);
                         }
 
                     }
@@ -211,8 +190,14 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
     }
 
     @Override
+    public void saveTheoryItem(String path, TheoryItemBean bean) {
+        if (!TextUtils.isEmpty(path) && bean != null) {
+            FileUtils.saveTheoryItem(path, bean);
+        }
+    }
+
+    @Override
     public void onDestroy() {
-        LocalBroadcastManager.getInstance(TheroyApplication.getContext()).unregisterReceiver(receiver);
         downLoadManager.stopAllTask();
     }
 
@@ -220,4 +205,15 @@ public class TheroyPresenterImpl implements ITheroyPresenter {
         return iView == null || iView.get() == null;
     }
 
+    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            //获取下载管理器
+            downLoadManager = DownLoadService.getDownLoadManager();
+            if (downLoadManager != null) {
+                downLoadManager.changeUser("theory");
+                downloadingTaskInfos = downLoadManager.getAllTask();
+            }
+        }
+    };
 }

@@ -16,13 +16,15 @@ public interface ITheroyPresenter {
 
     void onResume();
 
-    void downLoad(ItemBookView itemBookView, TheoryItemBean bean);
+    void downLoad(TheoryItemBean bean);
 
     void openTheory(ItemBookView itemBookView, TheoryItemBean bean);
 
     ArrayList<TaskInfo> getDownloadingTaskInfos();
 
     TaskInfo getTaskInfo(String taskID);
+
+    void saveTheoryItem(String path, TheoryItemBean bean);
 
     void onDestroy();
 

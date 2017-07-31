@@ -20,13 +20,13 @@ public interface ITheoryView {
 
     void initOrigin(ArrayList<TheoryItemBean> itemBeans);
 
-    void onStartDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo);
+    void onStartDownload(SQLDownLoadInfo sqlDownLoadInfo);
 
-    void onProgressDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint);
+    void onProgressDownload(SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint);
 
-    void onStopDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint);
+    void onStopDownload(SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint);
 
-    void onErrorDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo);
+    void onErrorDownload(SQLDownLoadInfo sqlDownLoadInfo);
 
-    void onSucessDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo);
+    void onSucessDownload(SQLDownLoadInfo sqlDownLoadInfo);
 }

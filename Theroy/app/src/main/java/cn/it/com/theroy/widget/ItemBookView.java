@@ -123,6 +123,11 @@ public class ItemBookView extends RelativeLayout implements View.OnClickListener
         setDownloadText("已经下载");
         setTvProgressViewVisiable(false);
         setProgressBarVisiable(false);
+
+        if (itemBean != null) {
+            itemBean.setDownlaodText("已经下载");
+            itemBean.setDownload(true);
+        }
     }
 
     public TheoryItemBean getItemBean() {

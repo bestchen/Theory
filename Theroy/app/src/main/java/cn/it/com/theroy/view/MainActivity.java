@@ -3,9 +3,8 @@ package cn.it.com.theroy.view;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.LinearLayout;
 
@@ -20,8 +19,6 @@ import cn.it.com.theroy.presenter.impl.TheroyPresenterImpl;
 import cn.it.com.theroy.uitls.FileUtils;
 import cn.it.com.theroy.uitls.UIUitls;
 import cn.it.com.theroy.widget.ItemBookView;
-import cn.it.com.theroy.widget.TheroyDialog;
-import cn.it.com.theroy.widget.TheroyDialogContentView;
 import cn.it.com.theroy.widget.TitleTextView;
 
 public class MainActivity extends FragmentActivity implements ITheoryView {
@@ -75,6 +72,7 @@ public class MainActivity extends FragmentActivity implements ITheoryView {
         if (itemBeans == null || itemBeans.isEmpty()) {
             return;
         }
+        itemBookViews.clear();
         final int size = itemBeans.size();
         LinearLayout recordContainer1 = (LinearLayout) findViewById(R.id.ll_record_container_1);
         LinearLayout recordContainer2 = (LinearLayout) findViewById(R.id.ll_record_container_2);
@@ -85,7 +83,7 @@ public class MainActivity extends FragmentActivity implements ITheoryView {
             params = UIUitls.generateLayoputParams();
             if (i % 4 == 0) {
                 params.leftMargin = UIUitls.getPixels(0);
-            } else if (i % 3 == 1) {
+            } else if (i % 4 == 3) {
                 params.rightMargin = UIUitls.getPixels(0);
             }
             final TheoryItemBean itemBean = itemBeans.get(i);
@@ -105,9 +103,10 @@ public class MainActivity extends FragmentActivity implements ITheoryView {
 
                 @Override
                 public void downloadClick(View v) {
-                    presenter.downLoad(itemBookView, itemBean);
+                    presenter.downLoad(itemBean);
                 }
             });
+            itemBookViews.add(itemBookView);
         }
     }
 
@@ -128,7 +127,7 @@ public class MainActivity extends FragmentActivity implements ITheoryView {
             params = UIUitls.generateLayoputParams();
             if (i % 4 == 0) {
                 params.leftMargin = UIUitls.getPixels(0);
-            } else if (i % 3 == 1 || i == 13) {
+            } else if (i % 4 == 3 || i == 13) {
                 params.rightMargin = UIUitls.getPixels(0);
             }
             final TheoryItemBean itemBean = itemBeans.get(i);
@@ -157,34 +156,70 @@ public class MainActivity extends FragmentActivity implements ITheoryView {
     }
 
     @Override
-    public void onStartDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo) {
+    public void onStartDownload(SQLDownLoadInfo sqlDownLoadInfo) {
         TaskInfo taskInfo = presenter.getTaskInfo(sqlDownLoadInfo.getTaskID());
         if (taskInfo != null) {
-            itemBookView.startDownload(taskInfo.getProgress());
+            ItemBookView bookView = findItemViewById(taskInfo.getTaskID());
+            if (bookView != null) {
+                bookView.startDownload(taskInfo.getProgress());
+            }
         }
     }
 
     @Override
-    public void onProgressDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint) {
+    public void onProgressDownload(SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint) {
         TaskInfo taskInfo = presenter.getTaskInfo(sqlDownLoadInfo.getTaskID());
         if (taskInfo != null) {
-            itemBookView.startDownload(taskInfo.getProgress());
+            ItemBookView bookView = findItemViewById(taskInfo.getTaskID());
+            if (bookView != null) {
+                bookView.startDownload(taskInfo.getProgress());
+            }
         }
     }
 
     @Override
-    public void onStopDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint) {
+    public void onStopDownload(SQLDownLoadInfo sqlDownLoadInfo, boolean isSupportBreakpoint) {
 
     }
 
     @Override
-    public void onErrorDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo) {
+    public void onErrorDownload(SQLDownLoadInfo sqlDownLoadInfo) {
 
     }
 
     @Override
-    public void onSucessDownload(ItemBookView itemBookView, SQLDownLoadInfo sqlDownLoadInfo) {
-        itemBookView.downloadSucess();
+    public void onSucessDownload(SQLDownLoadInfo sqlDownLoadInfo) {
+        TaskInfo taskInfo = presenter.getTaskInfo(sqlDownLoadInfo.getTaskID());
+        if (taskInfo != null) {
+            ItemBookView bookView = findItemViewById(taskInfo.getTaskID());
+            if (bookView != null) {
+                bookView.downloadSucess();
+                TheoryItemBean itemBean = bookView.getItemBean();
+                if (itemBean != null) {
+                    presenter.saveTheoryItem(FileUtils.getRecordPath(itemBean.getId()), itemBean);
+                }
+            }
+        }
+    }
+
+    private ItemBookView findItemViewById(String id) {
+        if (TextUtils.isEmpty(id) || itemBookViews.isEmpty()) {
+            return null;
+        }
+        for (int i = 0, size = itemBookViews.size(); i < size; i++) {
+            final ItemBookView view = itemBookViews.get(i);
+            if (view == null) {
+                continue;
+            }
+            final TheoryItemBean itemBean = view.getItemBean();
+            if (itemBean == null) {
+                continue;
+            }
+            if (id.equals(itemBean.getId())) {
+                return view;
+            }
+        }
+        return null;
     }
 
     @Override

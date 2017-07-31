@@ -19,15 +19,15 @@ import cn.it.com.theroy.bean.TheoryItemBean;
 public class FileUtils {
 
     public static String getRecordAudioPath(String id) {
-        return UIUitls.getContext().getFilesDir() + File.separator + "record_" + File.separator + "audio_" + File.separator + id;
+        return UIUitls.getContext().getFilesDir().getPath() + "_record_" + "audio_" + id;
     }
 
     public static String getRecordPath(String id) {
-        return UIUitls.getContext().getFilesDir() + File.separator + "record_" + File.separator + "txt_" + File.separator + id;
+        return UIUitls.getContext().getFilesDir().getPath() + "_record_" + "txt_" + id;
     }
 
     public static String getOriginPath(String id) {
-        return UIUitls.getContext().getFilesDir() + File.separator + "origin_" + File.separator + "txt" + File.separator + id;
+        return UIUitls.getContext().getFilesDir().getPath() + "_origin_" + "txt" + id;
     }
 
     public static void closeStream(Closeable closeable) {
@@ -64,6 +64,9 @@ public class FileUtils {
         try {
             //如果文件不存在就创建文件
             File file = new File(path);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
             //file.createNewFile();
             //获取输出流
             //这里如果文件不存在会创建文件，这是写文件和读文件不同的地方

@@ -212,12 +212,14 @@ public class DownLoadManager {
         if (filepath == null) {
             file = new File(FileHelper.getFileDefaultPath() + "/(" + FileHelper.filterIDChars(TaskID) + ")" + fileName);
             if (file.exists()) {
-                return -1;
+                file.delete();
+                return 1;
             }
         } else {
             file = new File(filepath);
             if (file.exists()) {
-                return -1;
+                file.delete();
+                return 1;
             }
         }
         return 1;
