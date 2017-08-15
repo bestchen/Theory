@@ -6,15 +6,18 @@ import cn.it.com.theroy.bean.TheoryItemBean;
 import cn.it.com.theroy.download.TaskInfo;
 import cn.it.com.theroy.widget.ItemBookView;
 
-/**
- * Created by Chenweiwei on 2017/7/29.
- */
 
 public interface ITheroyPresenter {
 
     void init();
 
-    void onResume();
+    void onLoadAssetsRes();
+
+    void initRecordItems();
+
+    void initOriginItems();
+
+    void openLastChapter(String tag,int index);
 
     void downLoad(TheoryItemBean bean);
 

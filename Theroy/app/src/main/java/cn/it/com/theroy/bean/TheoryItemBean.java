@@ -1,41 +1,42 @@
 package cn.it.com.theroy.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.io.Serializable;
 
 import cn.it.com.theroy.uitls.FileUtils;
 
-/**
- * Created by Chenweiwei on 2017/7/30.
- */
 
 public class TheoryItemBean implements Serializable {
 
+    public final static String TAG_RECORD = "tag_record";
+    public final static String TAG_ORIGIN = "tag_origin";
     private String id = "";
     private boolean isDownload = false;
-    private String downlaodText;
+    private String downloadTip;
     private String chapterText;
     private String downloadPath;
     private String downloadFileName = id;
+    private String tag = "";
+    private int index;
 
-    private static TheoryItemBean creatBaseItem(String id) {
+    private static TheoryItemBean creatBaseItem(String id, String downloadTip, String tag, int index) {
         TheoryItemBean item = new TheoryItemBean();
         item.setId(id);
-        item.setDownlaodText("下载");
+        item.setDownloadTip(downloadTip);
+        item.tag = tag;
+        item.index = index;
+        item.setDownload("已经下载".equals(downloadTip));
         return item;
     }
 
-    public static TheoryItemBean createRecodItem(String id, String chapterText) {
-        TheoryItemBean item = creatBaseItem(id);
+    public static TheoryItemBean createRecodItem(String id, String downloadTip, String chapterText, String tag, int index) {
+        TheoryItemBean item = creatBaseItem(id, downloadTip, tag, index);
         item.setChapterText(chapterText);
         item.setDownloadPath(FileUtils.generateDownloadPath(id));
         return item;
     }
 
-    public static TheoryItemBean createOriginItem(String id, String chapterText) {
-        TheoryItemBean item = creatBaseItem(id);
+    public static TheoryItemBean createOriginItem(String id, String chapterText, String tag, int index) {
+        TheoryItemBean item = creatBaseItem(id, "", tag, index);
         item.setChapterText(chapterText);
         item.setDownloadPath("");
         return item;
@@ -57,12 +58,12 @@ public class TheoryItemBean implements Serializable {
         isDownload = download;
     }
 
-    public String getDownlaodText() {
-        return downlaodText;
+    public String getDownloadTip() {
+        return downloadTip;
     }
 
-    public void setDownlaodText(String downlaodText) {
-        this.downlaodText = downlaodText;
+    public void setDownloadTip(String downloadTip) {
+        this.downloadTip = downloadTip;
     }
 
     public String getChapterText() {
@@ -89,14 +90,20 @@ public class TheoryItemBean implements Serializable {
         this.downloadFileName = downloadFileName;
     }
 
-    @Override
-    public String toString() {
-        return "TheoryItemBean{" +
-                "id='" + id + '\'' +
-                ", isDownload=" + isDownload +
-                ", downlaodText='" + downlaodText + '\'' +
-                ", chapterText='" + chapterText + '\'' +
-                ", downloadPath='" + downloadPath + '\'' +
-                '}';
+    public String getTag() {
+        return tag;
     }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
 }

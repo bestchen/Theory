@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_bg"
-    tools:context="cn.it.com.theroy.view.MainActivity">
+    tools:context="cn.it.com.theroy.activity.MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -73,4 +73,10 @@
         android:id="@+id/title_textview_holder"
         style="@style/theroy_title_style"
         android:visibility="gone" />
+
+    <View
+        android:id="@+id/splash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_splash" />
 </FrameLayout>

@@ -15,9 +15,6 @@ import cn.it.com.theroy.R;
 import cn.it.com.theroy.bean.TheoryItemBean;
 import cn.it.com.theroy.download.db.SQLDownLoadInfo;
 
-/**
- * Created by Chenweiwei on 2017/7/29.
- */
 
 public class ItemBookView extends RelativeLayout implements View.OnClickListener {
 
@@ -28,6 +25,7 @@ public class ItemBookView extends RelativeLayout implements View.OnClickListener
     private TextView tvProgressView;
     private ProgressBar progressBar;
     private TextView chapterView;
+    private View tipView;
 
     private TheoryItemBean itemBean;
     private OnItemClickListener itemClickListener;
@@ -49,7 +47,8 @@ public class ItemBookView extends RelativeLayout implements View.OnClickListener
         tvProgressView = (TextView) findViewById(R.id.tv_progressbar);
         progressBar = (ProgressBar) findViewById(R.id.pb_progressbar);
         chapterView = (TextView) findViewById(R.id.tv_cahpter);
-        this.setOnClickListener(this);
+        tipView = findViewById(R.id.tip);
+        rootView.setOnClickListener(this);
         downloadView.setOnClickListener(this);
     }
 
@@ -125,9 +124,13 @@ public class ItemBookView extends RelativeLayout implements View.OnClickListener
         setProgressBarVisiable(false);
 
         if (itemBean != null) {
-            itemBean.setDownlaodText("已经下载");
+            itemBean.setDownloadTip("已经下载");
             itemBean.setDownload(true);
         }
+    }
+
+    public void setTipViewVisiable(boolean visiable) {
+        tipView.setVisibility(visiable ? VISIBLE : GONE);
     }
 
     public TheoryItemBean getItemBean() {

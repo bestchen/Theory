@@ -22,9 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
-/**
- * Created by Chenweiwei on 2017/7/29.
- */
 
 public class UIUitls {
 

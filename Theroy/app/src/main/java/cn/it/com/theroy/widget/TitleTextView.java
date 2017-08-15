@@ -12,14 +12,11 @@ import android.view.View;
 import cn.it.com.theroy.R;
 import cn.it.com.theroy.uitls.UIUitls;
 
-/**
- * Created by Chenweiwei on 2017/7/29.
- */
 
 public class TitleTextView extends View {
 
     private int bgColor = UIUitls.getColor(R.color.color_336699);
-    private int titlecolor=UIUitls.getColor(R.color.color_cc9900);
+    private int titlecolor = UIUitls.getColor(R.color.color_cc9900);
     private int titleSize = UIUitls.sp2pix(14);
     private int textHeight;
     private String titlePre;

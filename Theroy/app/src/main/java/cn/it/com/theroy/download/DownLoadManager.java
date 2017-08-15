@@ -3,6 +3,7 @@ package cn.it.com.theroy.download;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class DownLoadManager {
 
     private ArrayList<DownLoader> taskList = new ArrayList<DownLoader>();
 
-    private final int MAX_DOWNLOADING_TASK = 5; // 最大同时下载数
+    private final int MAX_DOWNLOADING_TASK = 8; // 最大同时下载数
 
     private DownLoader.DownLoadSuccess downloadsuccessListener = null;
 
@@ -174,7 +175,7 @@ public class DownLoadManager {
         downloadinfo.setFileName(fileName);
         downloadinfo.setUrl(url);
         if (filepath == null) {
-            downloadinfo.setFilePath(FileHelper.getFileDefaultPath() + "/(" + FileHelper.filterIDChars(TaskID) + ")" + fileName);
+            downloadinfo.setFilePath(FileHelper.getFileDefaultPath() + "/" /*"/(" + FileHelper.filterIDChars(TaskID) + ")" +*/ + fileName + ".zip");
         } else {
             downloadinfo.setFilePath(filepath);
         }
@@ -210,7 +211,7 @@ public class DownLoadManager {
         }
         File file = null;
         if (filepath == null) {
-            file = new File(FileHelper.getFileDefaultPath() + "/(" + FileHelper.filterIDChars(TaskID) + ")" + fileName);
+            file = new File(FileHelper.getFileDefaultPath() /*+ "/(" + FileHelper.filterIDChars(TaskID) + ")"*/ + fileName);
             if (file.exists()) {
                 file.delete();
                 return 1;

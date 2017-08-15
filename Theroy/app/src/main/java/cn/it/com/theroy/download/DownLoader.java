@@ -3,6 +3,7 @@ package cn.it.com.theroy.download;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.File;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import cn.it.com.theroy.download.db.DataKeeper;
 import cn.it.com.theroy.download.db.FileHelper;
 import cn.it.com.theroy.download.db.SQLDownLoadInfo;
+import cn.it.com.theroy.uitls.FileUtils;
 
 /**
  * 类功能描述：下载执行类，每一个 DataKeeper对象 代表一个下载任务</br>
@@ -132,7 +134,7 @@ public class DownLoader {
             downLoadThread = null;
         }
         datakeeper.deleteDownLoadInfo(userID, sqlDownLoadInfo.getTaskID());
-        File downloadFile = new File(TEMP_FILEPATH + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + sqlDownLoadInfo.getFileName());
+        File downloadFile = new File(TEMP_FILEPATH /*+ "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")"*/ + sqlDownLoadInfo.getFileName());
         if (downloadFile.exists()) {
             downloadFile.delete();
         }
@@ -204,8 +206,8 @@ public class DownLoader {
                     if (fileSize < 1) {//第一次下载，初始化
                         openConnention();
                     } else {
-                        if (new File(TEMP_FILEPATH + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + sqlDownLoadInfo.getFileName()).exists()) {
-                            localFile = new RandomAccessFile(TEMP_FILEPATH + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + sqlDownLoadInfo.getFileName(), "rwd");
+                        if (new File(TEMP_FILEPATH + /*"/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + */sqlDownLoadInfo.getFileName()).exists()) {
+                            localFile = new RandomAccessFile(TEMP_FILEPATH /*+ "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")"*/ + sqlDownLoadInfo.getFileName(), "rwd");
                             localFile.seek(downFileSize);
                             urlConn.setRequestProperty("Range", "bytes=" + downFileSize + "-");
                         } else {
@@ -231,9 +233,11 @@ public class DownLoader {
                     if (downFileSize == fileSize) {
                         boolean renameResult = RenameFile();
                         if (renameResult) {
+                            FileUtils.upZipFile(FileHelper.getFileDefaultPath() + "/" + sqlDownLoadInfo.getFileName() + ".zip", FileHelper.audioUnZipPath);
+                            Log.e("tag", "upZipFile..." + FileHelper.getFileDefaultPath() + "/" + sqlDownLoadInfo.getFileName() + ".zip");
                             handler.sendEmptyMessage(TASK_SUCCESS); //转移文件成功
                         } else {
-                            new File(TEMP_FILEPATH + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + sqlDownLoadInfo.getFileName()).delete();
+                            new File(TEMP_FILEPATH /*+ "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" */ + sqlDownLoadInfo.getFileName()).delete();
                             handler.sendEmptyMessage(TASK_ERROR);//转移文件失败
                         }
                         //清除数据库任务
@@ -307,7 +311,7 @@ public class DownLoader {
             long urlfilesize = urlConn.getContentLength();
             if (urlfilesize > 0) {
                 isFolderExist();
-                localFile = new RandomAccessFile(TEMP_FILEPATH + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + sqlDownLoadInfo.getFileName(), "rwd");
+                localFile = new RandomAccessFile(TEMP_FILEPATH + /*"/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" +*/ sqlDownLoadInfo.getFileName(), "rwd");
                 localFile.setLength(urlfilesize);
                 sqlDownLoadInfo.setFileSize(urlfilesize);
                 fileSize = urlfilesize;
@@ -459,7 +463,7 @@ public class DownLoader {
         if (newfile.exists()) {
             newfile.delete();
         }
-        File olefile = new File(TEMP_FILEPATH + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")" + sqlDownLoadInfo.getFileName());
+        File olefile = new File(TEMP_FILEPATH/* + "/(" + FileHelper.filterIDChars(sqlDownLoadInfo.getTaskID()) + ")"*/ + sqlDownLoadInfo.getFileName());
 
         String filepath = sqlDownLoadInfo.getFilePath();
         filepath = filepath.substring(0, filepath.lastIndexOf("/"));

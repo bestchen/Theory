@@ -27,7 +27,7 @@
         android:layout_height="20dp"
         android:gravity="center_horizontal"
         android:text="0%"
-        android:textColor="@color/color_336699"
+        android:textColor="@color/color_ffffff"
         android:textSize="12sp"
         android:visibility="invisible" />
 
@@ -60,5 +60,15 @@
         android:text="第一卷"
         android:textColor="@color/color_cc9900"
         android:textSize="12sp" />
+
+    <View
+        android:id="@+id/tip"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_below="@+id/tv_cahpter"
+        android:layout_marginLeft="13dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/shape_cicler_green"
+        android:visibility="gone" />
 
 </RelativeLayout>

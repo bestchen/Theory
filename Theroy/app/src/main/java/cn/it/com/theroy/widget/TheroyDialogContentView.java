@@ -10,9 +10,6 @@ import android.widget.TextView;
 import cn.it.com.theroy.R;
 import cn.it.com.theroy.bean.TheoryItemBean;
 
-/**
- * Created by Chenweiwei on 2017/7/29.
- */
 
 public class TheroyDialogContentView extends LinearLayout implements View.OnClickListener {
 
@@ -22,6 +19,8 @@ public class TheroyDialogContentView extends LinearLayout implements View.OnClic
     private TextView tvConfirm;
 
     private TheroyDialog dialog;
+
+    private TheoryItemBean confirmTag;
 
     private OnDialogClickListener dialogClickListener;
 
@@ -70,9 +69,7 @@ public class TheroyDialogContentView extends LinearLayout implements View.OnClic
                 break;
             case R.id.tv_confirm:
                 if (dialogClickListener != null) {
-                    if (v.getTag() instanceof TheoryItemBean) {
-                        dialogClickListener.onConfirm((TheoryItemBean) v.getTag());
-                    }
+                    dialogClickListener.onConfirm(confirmTag);
                 }
                 break;
         }
@@ -82,7 +79,7 @@ public class TheroyDialogContentView extends LinearLayout implements View.OnClic
     }
 
     public void setConfirmTag(TheoryItemBean bean) {
-        tvConfirm.setTag(bean);
+        this.confirmTag = bean;
     }
 
     public TheroyDialog getDialog() {

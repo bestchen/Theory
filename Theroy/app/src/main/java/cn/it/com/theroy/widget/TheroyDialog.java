@@ -11,9 +11,6 @@ import android.view.ViewGroup;
 import cn.it.com.theroy.R;
 import cn.it.com.theroy.bean.TheoryItemBean;
 
-/**
- * Created by Chenweiwei on 2017/7/29.
- */
 
 public class TheroyDialog extends AlertDialog {
 
@@ -35,8 +32,8 @@ public class TheroyDialog extends AlertDialog {
         lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         getWindow().setAttributes(lp);
 
-        setCancelable(true);
-        setCanceledOnTouchOutside(true);
+        setCancelable(false);
+        setCanceledOnTouchOutside(false);
 
         setContentView();
     }
